@@ -2,6 +2,8 @@
 
 Let's try to merge the best parts of formats like CSV, JSON, YAML to one simple format - TTT (Text Tree/Table).
 
+## Example
+
 ```
 # comment
 
@@ -12,8 +14,8 @@ can include newlines,
 
 empty lines,
 self-escaped "",
-any [,]{:}# characters,
-and leading/trailing whitespace "
+[,]{:}(#) characters,
+leading/trailing whitespace "
 
 # list
 val1, val2, [nested, list]
@@ -51,7 +53,7 @@ key2:[nested,list]
 key3:{nested:map}
 }
 
-# {} are distinguishing it from
+# {} distinguish map from
 # list of maps
 map1:here
 map2:there,more:items
@@ -80,4 +82,22 @@ id,data
   v21,v22
 ]
 20,[]
+
+# indented key or value
+level1: {
+  level2: {
+    level3: (
+      indented key or value
+      can include newlines,
+
+      empty lines,
+      [,]{:}(#)" characters,
+      leading/trailing whitespace 
+    )
+  }
+}    
 ```
+
+## Roadmap
+
+* Add rules and other like in [txtt](https://github.com/whyolet/txtt#txtt).
