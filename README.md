@@ -95,7 +95,40 @@ level1: {
       leading/trailing whitespace 
     )
   }
-}    
+}
+
+# optional : before [{( in map
+# and optional , in list and map
+
+select[a b c] from[t] where{and[
+  eq[a b] ne[b c]
+]}
+
+# equivalent JSON
+{
+  "select": ["a", "b", "c"],
+  "from": ["t"],
+  "where": {"and": [
+    {"eq": ["a", "b"]},
+    {"ne": ["b", "c"]}
+  ]}
+}
+
+# equivalent YAML
+select:
+  - a
+  - b
+  - c
+from:
+  - t
+where:
+  and:
+    - eq:
+      - a
+      - b
+    - ne:
+      - b
+      - c
 ```
 
 ## Roadmap
