@@ -47,7 +47,7 @@ TODO: create a concise example showcasing main features from the rules below.
 
 * TTT format supports Unicode as is, without escape sequences like `\uFFFF`, default encoding is UTF-8.
 * TTT file is parsed line by line with a simple strict state machine.
-* Initial state is an implicit newline-separated list.
+* Initial state is an implicit multiline list.
   * This allows to support zero, one, or multiple root values in one file naturally without additional concepts like "document" and separators like `---` in YAML.
   * Empty file parses to an empty list:
     ```
@@ -59,9 +59,9 @@ TODO: create a concise example showcasing main features from the rules below.
 
 ### List
 
-* List is either comma-separated or newline-separated.
+* List is either inline or multiline.
 
-#### Comma-separated list
+#### Inline list
 
 ```
 foo, bar baz, [nested, list here]
@@ -70,13 +70,13 @@ foo, bar baz, [nested, list here]
 ["foo", "bar baz", ["nested", "list here"]]
 ```
 
-* Comma-separated list (CSL) is either explicit or implicit.
-* Explicit CSL is:
+* Inline list is either explicit or implicit.
+* Explicit inline list is:
   * `[` character,
-  * implicit CSL,
+  * implicit inline list,
   * `]` character.
-* Implicit CSL is zero or more items separated by a comma.
-* CSL item is:
+* Implicit inline list is zero or more items separated by a comma.
+* Inline list item is:
   * zero or more spaces,
   * a value,
   * zero or more spaces.
@@ -88,7 +88,7 @@ a,b, c, d , ,,  g
 ["a","b","c","d","","","g"]
 ```
 
-#### Newline-separated list
+#### Multiline list
 
 ```
 foo
@@ -109,15 +109,15 @@ bar baz
 ]
 ```
 
-* Newline-separated list (NSL) is either explicit or implicit.
-* Explicit NSL is:
+* Multiline list is either explicit or implicit.
+* Explicit multiline list is:
   * `[` character,
   * a newline,
-  * implicit NSL,
+  * implicit multiline list,
   * a newline,
   * `]` character.
-* Implicit NSL is zero or more items separated by a newline.
-* NSL item is:
+* Implicit multiline list is zero or more items separated by a newline.
+* Multiline list item is:
   * zero or more:
     * spaces,
     * empty lines,
@@ -150,10 +150,11 @@ list here
 
 #### Nested list
 
-* Comma-separated list can be implicit when it is nested in a newline-separated list, as in CSV:
+* CSV table looks like TTT implicit multiline list with nested implicit inline lists:
   ```
+  # CSV, TTT:
   a,aa,aaa
-  b, bb, bbb
+  b,bb,bbb
 
   # JSON:
   [
@@ -161,36 +162,41 @@ list here
     ["b", "bb", "bbb"]
   ]
   ```
-* All other combinations require the nested list to be explicit:
+* Inline list with two or more items can be implicit when it is nested in a multiline list:
   ```
-  comma, [comma, comma], comma
-
-  comma, [
-    newline
-    newline
-  ], comma
-
-  newline
-  [
-    newline
-    newline
-  ]
-  newline
+  multiline
+  inline, inline
+  multiline
   ```
-  vs implicit:
+* It can be explicit too:
   ```
-  newline
-  comma, comma
-  newline
+  multiline
+  [inline, inline]
+  multiline
   ```
-* Empty nested list have to be explicit:
+* All other cases of nested lists have to be explicit:
   ```
-  # TTT file is a parent list,
-  # with this nested list:
+  multiline
   []
+  multiline
 
-  # JSON file:
-  [[]]
+  multiline
+  [inline]
+  multiline
+
+  multiline
+  [
+    multiline
+    multiline
+  ]
+  multiline
+
+  inline, [
+    multiline
+    multiline
+  ], inline
+  
+  inline, [inline, inline], inline
   ```
 
 ## Old example
