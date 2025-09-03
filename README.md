@@ -10,7 +10,7 @@ TODO: create a concise example showcasing main features from the rules below.
 
 * [CSV](https://en.wikipedia.org/wiki/Comma-separated_values) doesn't support nested lists, maps, and reliable header presence check.
 * [JSON](https://json.org/) is too verbose, yet lacks comments and tables.
-* [YAML](https://yaml.org/) has too complex spec and [implicit typing surprises](https://hitchdev.com/strictyaml/why/implicit-typing-removed/).
+* [YAML](https://yaml.org/) has too complex [spec](https://yaml.org/spec/1.2.2/) and [implicit typing surprises](https://hitchdev.com/strictyaml/why/implicit-typing-removed/).
 * Other alternatives have similar limitations, from A to Z:
   * [CSON](https://github.com/bevry/cson)
   * [edn](https://github.com/edn-format/edn)
@@ -59,11 +59,7 @@ TODO: create a concise example showcasing main features from the rules below.
 
 ### List
 
-* Explicit list is made of:
-  * `[` character.
-  * Implicit list.
-  * `]` character.
-* Implicit list is either comma-separated or newline-separated.
+* List is either comma-separated or newline-separated.
 
 #### Comma-separated list
 
@@ -74,16 +70,23 @@ foo, bar baz, [nested, list here]
 ["foo", "bar baz", ["nested", "list here"]]
 ```
 
-* Comma-separated list
-  * is made of two or more values,
-  * separated by a comma,
-  * with zero or more spaces before/after each value.
-  ```
-  a,b, c,  d ,, , g  
+* Comma-separated list (CSL) is either explicit or implicit.
+* Explicit CSL is:
+  * `[` character,
+  * implicit CSL,
+  * `]` character.
+* Implicit CSL is zero or more items separated by a comma.
+* CSL item is:
+  * zero or more spaces,
+  * a value,
+  * zero or more spaces.
 
-  # JSON:
-  ["a","b","c","d","","","g"]
-  ```
+```
+a,b, c, d , ,,  g
+
+# JSON:
+["a","b","c","d","","","g"]
+```
 
 #### Newline-separated list
 
@@ -106,27 +109,44 @@ bar baz
 ]
 ```
 
-* Newline-separated list
-  * is made of zero or more values,
-  * separated by a newline,
-  * with zero or more spaces, empty lines, and comment lines before/after each value.
-  ```
-  a
-  b
-  # comment
-  
-    c
-  d  
-  ""
-  [nested
-  list here]
+* Newline-separated list (NSL) is either explicit or implicit.
+* Explicit NSL is:
+  * `[` character,
+  * a newline,
+  * implicit NSL,
+  * a newline,
+  * `]` character.
+* Implicit NSL is zero or more items separated by a newline.
+* NSL item is:
+  * zero or more:
+    * spaces,
+    * empty lines,
+    * comment lines,
+  * a value,
+  * zero or more:
+    * spaces,
+    * empty lines,
+    * comment lines.
 
-  # JSON:
-  [
-    "a", "b", "c", "d", "",
-    ["nested", "list here"]
-  ]
-  ```
+```
+a
+b
+# comment
+
+  c
+d
+""
+[
+nested
+list here
+]
+
+# JSON:
+[
+  "a", "b", "c", "d", "",
+  ["nested", "list here"]
+]
+```
 
 #### Nested list
 
@@ -163,9 +183,14 @@ bar baz
   comma, comma
   newline
   ```
-* Empty nested list:
+* Empty nested list have to be explicit:
   ```
+  # TTT file is a parent list,
+  # with this nested list:
   []
+
+  # JSON file:
+  [[]]
   ```
 
 ## Old example
