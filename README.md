@@ -199,6 +199,219 @@ list here
   inline, [inline, inline], inline
   ```
 
+### Map
+
+* Map is either inline or multiline.
+
+#### Inline map
+
+```
+foo: bar baz, indented(
+  text
+  here
+), list[a, b], map{k: v}
+
+# JSON:
+{
+  "foo": "bar baz",
+  "indented": "text\nhere",
+  "list": ["a", "b"],
+  "map": {"k": "v"}
+}
+```
+
+* Inline map is either explicit or implicit.
+* Explicit inline map is:
+  * `{` character,
+  * implicit inline map,
+  * `}` character.
+* Implicit inline map is zero or more items separated by a comma.
+* Inline map item is either basic or advanced.
+* Basic map item is:
+  * zero or more spaces,
+  * a key,
+  * zero or more spaces,
+  * `:` character,
+  * zero or more spaces,
+  * a quoted or unquoted text,
+  * zero or more spaces.
+  ```
+  a:b, c: d , e : f
+
+  # JSON:
+  {"a": "b", "c": "d", "e": "f"}
+  ```
+* Advanced map item is:
+  * zero or more spaces,
+  * a key,
+  * either of:
+    * indented text,
+    * explicit list,
+    * explicit map,
+  * zero or more spaces.
+  ```
+  text(), list[], map{}
+
+  # JSON:
+  {
+    "text": "",
+    "list": [],
+    "map": {}
+  }
+  ```
+
+#### Multiline map
+
+```
+{
+  foo: bar baz
+  multiline(
+    text
+    here
+  )
+  list[
+    a
+    b
+  ]
+  map{
+    k: v
+    key: val
+  }
+}
+
+# JSON:
+{
+  "foo": "bar baz",
+  "multiline": "text\nhere",
+  "list": [
+    "a",
+    "b",
+  ],
+  "map": {
+    "k": "v",
+    "key": "val"
+  }
+}
+```
+
+* Multiline map is always explicit to avoid confusion with a list of inline maps as in this [DSL example](#dsl-example).
+* Multiline map is:
+  * `{` character,
+  * a newline,
+  * zero or more items separated by a newline,
+  * a newline,
+  * `}` character.
+* Multiline map item is:
+  * zero or more:
+    * spaces,
+    * empty lines,
+    * comment lines,
+  * either a basic
+    or an advanced map item,
+  * zero or more:
+    * spaces,
+    * empty lines,
+    * comment lines.
+
+```
+{
+# compact version
+# of the previous example
+
+foo: bar baz
+multiline: "text
+here"
+list[a,b]
+map{k:v,key:val}
+}
+
+# JSON is the same
+# as in the previous example.
+```
+
+#### Nested map
+
+* Inline map with one or more items can be implicit when it is nested in a multiline list:
+  ```
+  multiline
+  inline: inline
+  multiline
+  ```
+* It can be explicit too:
+  ```
+  multiline
+  {inline: inline}
+  multiline
+  ```
+* All other cases of nested maps have to be explicit:
+  ```
+  multiline
+  {}
+  multiline
+
+  multiline
+  {
+    multiline: multiline
+  }
+  multiline
+
+  inline, {
+    multiline: multiline
+  }, inline
+  
+  inline, {inline: inline}, inline
+  
+  inline{inline: inline}
+
+  inline{
+    multiline: multiline
+  }
+
+  {
+    multiline{inline: inline}
+    multiline2{
+      multiline: multiline
+    }
+  }
+  ```
+
+## DSL example
+
+```
+select[a, b, c],from[
+  table
+],where{and[
+  eq[a, b]
+  ne[b, c]
+]}
+
+# JSON:
+{
+  "select": ["a", "b", "c"],
+  "from": ["table"],
+  "where": {"and": [
+    {"eq": ["a", "b"]},
+    {"ne": ["b", "c"]}
+  ]}
+}
+
+# YAML:
+select:
+  - a
+  - b
+  - c
+from:
+  - table
+where:
+  and:
+    - eq:
+      - a
+      - b
+    - ne:
+      - b
+      - c
+```
+
 ## Old example
 
 TODO: Create rules by moving and improving ideas from the example below.
@@ -215,32 +428,6 @@ empty lines,
 self-escaped "",
 [,]{:}(#) characters,
 leading/trailing whitespace "
-
-# map
-key1: val1, key2: [nested, list], key3: {nested: map}
-
-# multiline map
-{
-  key1: val1
-  key2: [nested, list]
-  key3: {nested: map}
-}
-
-# whitespace around is optional
-{
-key1:val1
-key2:[nested,list]
-key3:{nested:map}
-}
-
-# {} distinguish map from
-# list of maps
-map1:here
-map2:there,more:items
-
-# list of lists
-v11,v12,v13
-v21,v22,v23
 
 # table
 k1,k2,k3
@@ -263,7 +450,7 @@ id,data
 ]
 20,[]
 
-# indented key or value
+# indented text
 level1: {
   level2: {
     level3: (
@@ -276,40 +463,6 @@ level1: {
     )
   }
 }
-
-# optional : before [{( in map
-# and optional , in list and map
-
-select[a,b,c],from[t],where{and[
-  eq[a,b]
-  ne[b,c]
-]}
-
-# equivalent JSON
-{
-  "select": ["a", "b", "c"],
-  "from": ["t"],
-  "where": {"and": [
-    {"eq": ["a", "b"]},
-    {"ne": ["b", "c"]}
-  ]}
-}
-
-# equivalent YAML
-select:
-  - a
-  - b
-  - c
-from:
-  - t
-where:
-  and:
-    - eq:
-      - a
-      - b
-    - ne:
-      - b
-      - c
 ```
 
 ## Roadmap
