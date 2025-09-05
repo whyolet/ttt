@@ -525,6 +525,17 @@ id: 2, name: Bob, description: friend of Alice
 * Unlike CSV, the header presence is explicit in TTT table thanks to the second item being `:` character.
 * This `:` character is not allowed to be the only character in the line by other rules.
 * See [Nested list](#nested-list) for TTT version of a CSV table without a header.
+* Nested table is always explicit, just like a multiline list it is:
+  ```
+  id,parts
+  :
+  1,[
+    width,height
+    :
+    20,30
+    40,50
+  ]
+  ```
 
 ## DSL example
 
