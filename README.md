@@ -88,7 +88,7 @@ value # inline comment
 hello world! 👋
 ```
 
-* Unquoted text is a sequence of any characters except few unsupported:
+* Unquoted text is one or more characters except few unsupported:
   * newlines,
   * leading/trailing whitespace,
   * 10 special characters:  
@@ -287,6 +287,7 @@ list here
     ["b", "bb", "bbb"]
   ]
   ```
+* See [Table](#table) for TTT version of a CSV table with a header.
 * Inline list with two or more items can be implicit when it is nested in a multiline list:
   ```
   multiline
@@ -501,6 +502,30 @@ map{k:v,key:val}
   }
   ```
 
+### Table
+
+```
+# Table:
+id,name,description
+:
+1,Alice,mad girl
+2,Bob,friend of Alice
+
+# List of maps:
+id: 1, name: Alice, description: mad girl
+id: 2, name: Bob, description: friend of Alice
+```
+
+* Table is a multiline list where:
+  * first item is inline list of keys,
+  * second item is `:` character,
+  * zero or more following items are inline lists of values.
+* Table is returned as a native table type if it is supported by the target language.
+* Otherwise it is returned as a list of maps, zipping the same keys to each list of values as shown in the example above.
+* Unlike CSV, the header presence is explicit in TTT table thanks to the second item being `:` character.
+* This `:` character is not allowed to be the only character in the line by other rules.
+* See [Nested list](#nested-list) for TTT version of a CSV table without a header.
+
 ## DSL example
 
 ```
@@ -538,34 +563,7 @@ where:
       - c
 ```
 
-## Old example
-
-TODO: Create rules by moving and improving ideas from the example below.
-
-```
-# table
-k1,k2,k3
-:
-v11,v12,v13
-v21,v22,v23
-
-# is equal to list of maps
-k1: v11, k2: v12, k3: v13
-k1: v21, k2: v22, k3: v23
-
-# nested tables
-id,data
-:
-10,[
-  k1,k2
-  :
-  v11,v12
-  v21,v22
-]
-20,[]
-```
-
 ## Roadmap
 
-* Apply TODOs above.
+* Apply TODO in Example.
 * Add valuable spec parts from [txtt](https://github.com/whyolet/txtt#txtt).
