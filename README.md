@@ -1,3 +1,5 @@
+![ttt icon](icons/ttt1280x640.png)
+
 # TTT
 
 TTT (Text Tree/Table) is a simple format for nested lists, maps, and tables of text data, merging the best ideas from CSV, JSON, YAML, and others.

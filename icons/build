@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -eu
+inkscape ttt.svg -w 512 -h 512 -o ttt512.png
