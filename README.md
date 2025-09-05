@@ -57,6 +57,130 @@ TODO: create a concise example showcasing main features from the rules below.
     []
     ```
 
+### Comment
+
+```
+# comment
+
+value # inline comment
+```
+
+* Comment is:
+  * `#` character,
+  * zero or more characters
+    until a newline or the end of file.
+* Comment styles other than `#` are not supported to keep it standardized and minimalist.
+
+### Value
+
+* Value is either a text, a list, a map, or a table.
+
+### Text
+
+* Text is either unquoted, quoted, or indented.
+* Escape sequences like `\n` are not supported:
+  * almost all characters can be represented as is,
+  * few cases unsupported by unquoted text are covered by quoted text and indented text.
+
+#### Unquoted text
+
+```
+hello world! 👋
+```
+
+* Unquoted text is a sequence of any characters except few unsupported:
+  * newlines,
+  * leading/trailing whitespace,
+  * 10 special characters:  
+    `[,]{:}(#)"`
+* Unquoted text is returned as a literal string value, never a number, a boolean, or anything else.
+
+#### Quoted text
+
+```
+"quoted text
+can include newlines,
+
+empty lines,
+self-escaped "" quote,
+[,]{:}(#) characters,
+leading/trailing whitespace "
+
+# JSON:
+"quoted text\ncan include newlines,\n\nempty lines,\nself-escaped \" quote,\n[,]{:}(#) characters,\nleading/trailing whitespace "
+```
+
+* Quoted text is:
+  * `"` character,
+  * zero or more:
+    * `""` pairs,
+    * characters other than `"`
+  * `"` character.
+* Quoted text is returned as a literal string value after removing the opening and closing `"` and replacing each `""` with a single `"`.
+* Multiline text in an indented structure is better represented with an indented text.
+
+#### Indented text
+
+```
+level1{
+  level2{
+    level3(
+      indented text
+      can include newlines,
+
+      empty lines,
+      [,]{:}(#)" characters,
+      leading/trailing whitespace
+
+    )
+  }
+}
+
+# JSON:
+{
+  "level1": {
+    "level2: {
+      "level3": "indented text\ncan include newlines,\n\nempty lines,\n[,]{:}(#)\" characters,\nleading/trailing whitespace\n"
+    }
+  }
+}
+```
+
+* Indented text is:
+  * `(` character in a line indented with N spaces,
+  * a newline,
+  * zero or more:
+    * empty lines,
+    * lines indented with N+2 or more spaces,
+  * a newline,
+  * N spaces,
+  * `)` character.
+* Indented text is returned as a literal string value after deletion of:
+  * 2 opening and 2 closing lines,
+  * exactly N+2 first spaces from each non-empty line, even if some lines start with more than N+2 spaces.
+
+```
+(
+  indented
+  text
+)
+
+# JSON:
+"indented\ntext"
+```
+
+```
+(
+
+  indented
+    text
+
+)
+
+# JSON:
+"\nindented\n  text\n"
+```
+
 ### List
 
 * List is either inline or multiline.
@@ -111,10 +235,11 @@ bar baz
 
 * Multiline list is either explicit or implicit.
 * Explicit multiline list is:
-  * `[` character,
+  * `[` character in a line indented with N spaces,
   * a newline,
-  * implicit multiline list,
+  * implicit multiline list indented with either zero or N+2 spaces,
   * a newline,
+  * N spaces,
   * `]` character.
 * Implicit multiline list is zero or more items separated by a newline.
 * Multiline list item is:
@@ -229,7 +354,7 @@ foo: bar baz, indented(
 * Inline map item is either basic or advanced.
 * Basic map item is:
   * zero or more spaces,
-  * a key,
+  * a text key,
   * zero or more spaces,
   * `:` character,
   * zero or more spaces,
@@ -243,7 +368,7 @@ foo: bar baz, indented(
   ```
 * Advanced map item is:
   * zero or more spaces,
-  * a key,
+  * a text key,
   * either of:
     * indented text,
     * explicit list,
@@ -296,10 +421,11 @@ foo: bar baz, indented(
 
 * Multiline map is always explicit to avoid confusion with a list of inline maps as in this [DSL example](#dsl-example).
 * Multiline map is:
-  * `{` character,
+  * `{` character in a line indented with N spaces,
   * a newline,
-  * zero or more items separated by a newline,
+  * zero or more items separated by a newline and indented with either zero or N+2 spaces,
   * a newline,
+  * N spaces,
   * `}` character.
 * Multiline map item is:
   * zero or more:
@@ -417,18 +543,6 @@ where:
 TODO: Create rules by moving and improving ideas from the example below.
 
 ```
-# comment
-
-unquoted key or value
-
-"quoted key or value
-can include newlines,
-
-empty lines,
-self-escaped "",
-[,]{:}(#) characters,
-leading/trailing whitespace "
-
 # table
 k1,k2,k3
 :
@@ -449,20 +563,6 @@ id,data
   v21,v22
 ]
 20,[]
-
-# indented text
-level1: {
-  level2: {
-    level3: (
-      indented key or value
-      can include newlines,
-
-      empty lines,
-      [,]{:}(#)" characters,
-      leading/trailing whitespace 
-    )
-  }
-}
 ```
 
 ## Roadmap
