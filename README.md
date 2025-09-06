@@ -47,8 +47,11 @@ TODO: create a concise example showcasing main features from the rules below.
 
 ### File
 
-* TTT format supports Unicode as is, without escape sequences like `\uFFFF`, default encoding is UTF-8.
+* TTT format supports Unicode as is, without escape sequences like `\uFFFF`.
+* Encoding is always UTF-8 to keep TTT parser and formatter simple. [BOM](https://en.wikipedia.org/wiki/Byte_order_mark) is not supported.
+* TTT file has `.ttt` extension and `text/ttt` content type (to be registered).
 * TTT file is parsed line by line with a simple strict state machine.
+* Invalid input leads to explicit error and no output at all to fix the issues earlier.
 * Initial state is an implicit multiline list.
   * This allows to support zero, one, or multiple root values in one file naturally without additional concepts like "document" and separators like `---` in YAML.
   * Empty file parses to an empty list:
@@ -95,7 +98,7 @@ hello world! 👋
   * leading/trailing whitespace,
   * 10 special characters:  
     `[,]{:}(#)"`
-* Unquoted text is returned as a literal string value, never a number, a boolean, or anything else.
+* Unquoted text is parsed as a literal text string value, never a number, a boolean, or anything else.
 
 #### Quoted text
 
@@ -118,7 +121,7 @@ leading/trailing whitespace "
     * `""` pairs,
     * characters other than `"`
   * `"` character.
-* Quoted text is returned as a literal string value after removing the opening and closing `"` and replacing each `""` with a single `"`.
+* Quoted text is parsed as a literal text string value after removing the opening and closing `"` and replacing each `""` with a single `"`.
 * Multiline text in an indented structure is better represented with an indented text.
 
 #### Indented text
@@ -157,9 +160,9 @@ level1{
   * a newline,
   * N spaces,
   * `)` character.
-* Indented text is returned as a literal string value after deletion of:
+* Indented text is parsed as a literal text string value after deletion of:
   * 2 opening and 2 closing lines,
-  * exactly N+2 first spaces from each non-empty line, even if some lines start with more than N+2 spaces.
+  * the first N+2 spaces from each non-empty line, even if some lines start with more than N+2 spaces.
 
 ```
 (
@@ -226,7 +229,7 @@ author:Henry Ford
   * 16% smaller than equally compact JSON (111 bytes),
   * 15% smaller than compact YAML (110 bytes),
   * 13% smaller than the most compact JSON (108 bytes).
-* Compact TTT beats the main competitors even with such small example.
+* Compact TTT beats the main competitors even with such a small example.
 * More deeply nested structure will make the difference even bigger.
 * TTT formatter produces indented output by default, with explicit flag required to produce compact output.
 
@@ -296,16 +299,17 @@ foo, bar baz, [nested, list here]
   * implicit inline list,
   * `]` character.
 * Implicit inline list is zero or more items separated by a comma.
+  * Trailing comma is invalid as not adding value here.
 * Inline list item is:
   * zero or more spaces,
   * a value,
   * zero or more spaces.
 
 ```
-a,b, c, d , ,,  g
+a,b, c, d ,  e  
 
 # JSON:
-["a","b","c","d","","","g"]
+["a", "b", "c", "d", "e"]
 ```
 
 #### Multiline list
@@ -627,8 +631,10 @@ id: 2, name: Bob, description: friend of Alice
   * first item is inline list of keys,
   * second item is `:` character,
   * zero or more following items are inline lists of values.
-* Table is returned as a native table type if it is supported by the target language.
-* Otherwise it is returned as a list of maps, zipping the same keys to each list of values as shown in the example above.
+* Table is parsed as a list of maps having the same keys.
+* If TTT formatter detects a list of N or more maps having the same keys, it produces TTT table.
+  * N equals 2 by default and may be configured.
+* Table can also be parsed/formatted directly to/from optimized structures like [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) using custom callback functions of parser/formatter, optional by default.
 * Unlike CSV, the header presence is explicit in TTT table thanks to the second item being `:` character.
 * This `:` character is not allowed to be the only character in the line by other rules.
 * See [Nested list](#nested-list) for TTT version of a CSV table without a header.
