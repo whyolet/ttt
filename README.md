@@ -228,6 +228,7 @@ author:Henry Ford
   * 13% smaller than the most compact JSON (108 bytes).
 * Compact TTT beats the main competitors even with such small example.
 * More deeply nested structure will make the difference even bigger.
+* TTT formatter produces indented output by default, with explicit flag required to produce compact output.
 
 ```
 # Properly indented YAML:
@@ -480,6 +481,15 @@ foo: bar baz, indented(
     "map": {}
   }
   ```
+* Duplicate keys are [invalid](https://hitchdev.com/strictyaml/why/duplicate-keys-disallowed/).
+* Empty key is quoted:
+  ```
+  "": unquoted
+  "": "quoted"
+  ""()
+  ""[]
+  ""{}
+  ```
 
 #### Multiline map
 
@@ -673,6 +683,11 @@ where:
 
 ## Roadmap
 
-* Add valuable spec parts from [txtt](https://github.com/whyolet/txtt#txtt).
 * Review.
 * Apply TODO in Example.
+* Strict grammar file:
+  * for syntax highlighters and linters,
+  * to generate parsers and formatters for multiple languages.
+* Generate and test a VS Code/Cursor extension.
+* Generate and test reference parser and formatter for JS.
+* Use it.
