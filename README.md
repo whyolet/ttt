@@ -183,6 +183,99 @@ level1{
 "\nindented\n  text\n"
 ```
 
+### Indentation
+
+```
+# Indented TTT:
+quotes[
+  {
+    text(
+      You can have
+      any color you want,
+
+        as long as it's black.
+    )
+    author: Henry Ford
+  }
+]
+```
+
+* One indentation level is exactly 2 spaces to keep it:
+  * standardized,
+  * compact enough,
+  * very readable.
+* However, sometimes a big file with deeply nested indentation may break a size limit, leading to workarounds such as converting indented YAML to a more compact one-line JSON [here](https://github.com/VictoriaMetrics/helm-charts/pull/1889/files#diff-394304da26181c13863c5f7658226a622e2c9326814639607313b06a36e78b32R17).
+* For such edge cases indentation in TTT is optional.
+* Indented TTT example above and compact TTT example below are equivalent.
+
+```
+# Compact TTT:
+quotes[{
+text:"You can have
+any color you want,
+
+  as long as it's black."
+author:Henry Ford
+}]
+```
+
+* This compact TTT (96 bytes) is:
+  * 48% smaller than indented JSON (142 bytes),
+  * 40% smaller than indented TTT (134 bytes),
+  * 25% smaller than properly indented YAML (120 bytes),
+  * 16% smaller than equally compact JSON (111 bytes),
+  * 15% smaller than compact YAML (110 bytes),
+  * 13% smaller than the most compact JSON (108 bytes).
+* Compact TTT beats the main competitors even with such small example.
+* More deeply nested structure will make the difference even bigger.
+
+```
+# Properly indented YAML:
+quotes:
+  - text: |
+      You can have
+      any color you want,
+
+        as long as it's black.
+    author: Henry Ford
+
+# Compact YAML:
+quotes:
+- text: |
+    You can have
+    any color you want,
+
+      as long as it's black.
+  author: Henry Ford
+
+# Indented JSON:
+{
+  "quotes": [
+    {
+      "text": "You can have\nany color you want,\n\n  as long as it's black.",
+      "author": "Henry Ford"
+    }
+  ]
+}
+
+# Equally compact JSON:
+{"quotes":[{
+"text":"You can have\nany color you want,\n\n  as long as it's black.",
+"author":"Henry Ford"
+}]}
+
+# The most compact JSON:
+{"quotes":[{"text":"You can have\nany color you want,\n\n  as long as it's black.","author":"Henry Ford"}]}
+```
+
+### Newline
+
+* Both parser and formatter treat newline as `\n` only,
+* because accepting `\r\n` and single `\r` to implement the [robustness principle](https://en.wikipedia.org/wiki/Robustness_principle) would actually lead to the [lack of robustness](https://en.wikipedia.org/wiki/Robustness_principle#Criticism),
+* and normalization of `\r\n` and `\r` to `\n` would require a special way to preserve `\r` in the output,
+* like a `"quoted text with escape sequences like \r\n"`,
+* which would increase complexity without much value added.
+
 ### List
 
 * List is either inline or multiline.
@@ -488,7 +581,9 @@ map{k:v,key:val}
     multiline: multiline
   }, inline
   
-  inline, {inline: inline}, inline
+  inline, {inline: inline}, {inline2: inline2}, inline
+
+  inline, {inline: inline, inline2: inline2}, inline
   
   inline{inline: inline}
 
@@ -578,5 +673,6 @@ where:
 
 ## Roadmap
 
-* Apply TODO in Example.
 * Add valuable spec parts from [txtt](https://github.com/whyolet/txtt#txtt).
+* Review.
+* Apply TODO in Example.
