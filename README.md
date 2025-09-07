@@ -702,9 +702,9 @@ id: 2, name: Bob, email: b@example.com, notes: ""
   * N equals 2 by default and may be configured.
 * Table can also be parsed/formatted directly to/from optimized structures like [pandas.DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html) using custom callback functions of parser/formatter, optional by default.
 * Unlike CSV, the header presence is explicit in TTT table thanks to the second item being `:` character.
-* This `:` character is not allowed to be the only character in the line by other rules.
+* Table cannot be confused with a multiline list because `:` character is invalid as a multiline list item due to other rules.
 * See [Nested list](#nested-list) for TTT version of a CSV table without a header.
-* Nested table is always explicit, just like a multiline list it is:
+* Nested table is always explicit, just like a multiline list:
   ```
   id,parts
   :
