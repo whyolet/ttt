@@ -210,7 +210,7 @@ level1{
 # JSON:
 {
   "level1": {
-    "level2: {
+    "level2": {
       "level3": "indented text\ncan include newlines,\n\nempty lines,\n[,]{:}(#)\" characters,\nleading/trailing whitespace\n"
     }
   }
@@ -542,11 +542,13 @@ foo: bar baz, indented(
     * explicit map,
   * zero or more spaces.
   ```
-  text(), list[], map{}
+  indented(
+    text
+  ), list[], map{}
 
   # JSON:
   {
-    "text": "",
+    "indented": "text",
     "list": [],
     "map": {}
   }
@@ -556,7 +558,9 @@ foo: bar baz, indented(
   ```
   "": unquoted
   "": "quoted"
-  ""()
+  ""(
+    indented
+  )
   ""[]
   ""{}
   ```
