@@ -273,7 +273,7 @@ quotes[
   * standardized,
   * compact enough,
   * very readable.
-* However, sometimes a big file with deeply nested indentation may break a size limit, leading to workarounds such as converting indented YAML to a more compact one-line JSON [here](https://github.com/VictoriaMetrics/helm-charts/pull/1889/files#diff-394304da26181c13863c5f7658226a622e2c9326814639607313b06a36e78b32R17).
+* However, sometimes a big file with deeply nested indentation may break a [size limit](https://kubernetes.io/docs/concepts/configuration/secret/#restriction-data-size), leading to workarounds such as converting indented YAML to a more compact one-line JSON [here](https://github.com/VictoriaMetrics/helm-charts/pull/1889/files#diff-394304da26181c13863c5f7658226a622e2c9326814639607313b06a36e78b32R17).
 * For such edge cases indentation in TTT is optional.
 * Indented TTT example above and compact TTT example below are equivalent.
 
