@@ -6,7 +6,73 @@ TTT (Text Tree/Table) is a simple format for nested lists, maps, and tables of t
 
 ## Example
 
-TODO: create a concise example showcasing main features from the rules below.
+```
+feature, example
+:
+unquoted text, hello world! 👋
+
+quoted text, "it can include
+newlines, empty lines,
+self-escaped "" quote,
+[,]{:}(#) characters,
+leading/trailing whitespace "
+
+indented text, (
+  like quoted text, but
+  without need to escape "
+  and ideal for indented
+    nested structures
+)
+
+list, [
+  multiline
+  multiline
+  inline, [inline], [
+    csv-like,list,of,lists
+    for,data,without,header
+  ]
+]
+
+table, [
+  id,name,email,notes
+  :
+  1,Alice,a@example.com,curious
+  2,Bob,b@example.com,""
+  # Whole big example
+  # is a table too!
+]
+
+comment, is ignored  # comment
+
+map, {
+  key: text
+  indented(
+    text
+    here
+  )
+  list[
+    multiline: list
+    of{inline: maps}, is[here]
+  ]
+  map{is: inline}
+  # Big map here is multiline.
+}
+
+dsl, [
+  select[a, b, c],from[
+    table
+  ],where{and[
+    eq[a, b]
+    ne[b, c]
+  ]}
+]
+
+compact mode,{
+level2{
+level3{}
+}
+}
+```
 
 ## Why
 
@@ -617,14 +683,14 @@ map{k:v,key:val}
 
 ```
 # Table:
-id,name,description
+id,name,email,notes
 :
-1,Alice,mad girl
-2,Bob,friend of Alice
+1,Alice,a@example.com,curious
+2,Bob,b@example.com,""
 
 # List of maps:
-id: 1, name: Alice, description: mad girl
-id: 2, name: Bob, description: friend of Alice
+id: 1, name: Alice, email: a@example.com, notes: curious
+id: 2, name: Bob, email: b@example.com, notes: ""
 ```
 
 * Table is a multiline list where:
@@ -689,8 +755,6 @@ where:
 
 ## Roadmap
 
-* Review.
-* Apply TODO in Example.
 * Strict grammar file:
   * for syntax highlighters and linters,
   * to generate parsers and formatters for multiple languages.
