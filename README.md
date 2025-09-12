@@ -227,7 +227,8 @@ level1{
   * N spaces,
   * `)` character.
 * Indented text is parsed as a literal text string value after deletion of:
-  * 2 opening and 2 closing lines,
+  * opening `(` and a newline,
+  * closing newline and a `)`,
   * the first N+2 spaces from each non-empty line, even if some lines start with more than N+2 spaces.
 
 ```
